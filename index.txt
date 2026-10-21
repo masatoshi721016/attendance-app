@@ -42,7 +42,7 @@
   <script>
     // アクセスされたら自動でご自身のGASのウェブアプリURLへ転送します
     window.addEventListener('DOMContentLoaded', function() {
-      const gasWebAppUrl = "https://script.google.com/macros/s/https://script.google.com/macros/s/AKfycbw7kLPMXfliazpKDnGy4PZThB7baEYH60Jvr5yhYJmkgItHvk5P8XlWzE048k6hMVoC/exec/exec"; // ★ここをご自身のURLに書き換えてください
+      const gasWebAppUrl = "https://script.google.com/macros/s/AKfycbw7kLPMXfliazpKDnGy4PZThB7baEYH60Jvr5yhYJmkgItHvk5P8XlWzE048k6hMVoC/exec";
       window.location.replace(gasWebAppUrl);
     });
   </script>
