@@ -8,14 +8,13 @@
   <!-- PWA・マニフェストファイル連携 -->
   <link rel="manifest" href="/manifest.json">
 
-  <!-- iPhone (iOS) 用のホーム画面アイコン設定 -->
-  <link rel="apple-touch-icon" href="/icon.jpg">
+  <!-- ホーム画面アイコン設定 (PNGに変更) -->
+  <link rel="apple-touch-icon" href="/icon.png">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="通所予定">
 
-  <!-- Android / Chrome 用アイコン設定 -->
-  <link rel="icon" type="image/jpeg" href="/icon.jpg">
+  <link rel="icon" type="image/png" href="/icon.png">
 
   <style>
     body {
@@ -40,7 +39,6 @@
   </style>
 
   <script>
-    // アクセスされたら自動でご自身のGASのウェブアプリURLへ転送します
     window.addEventListener('DOMContentLoaded', function() {
       const gasWebAppUrl = "https://script.google.com/macros/s/AKfycbw7kLPMXfliazpKDnGy4PZThB7baEYH60Jvr5yhYJmkgItHvk5P8XlWzE048k6hMVoC/exec";
       window.location.replace(gasWebAppUrl);
