@@ -2,7 +2,8 @@
 <html lang="ja">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <base target="_top">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>通所予定入力フォーム</title>
 
   <!-- PWA・マニフェストファイル連携 -->
@@ -14,42 +15,613 @@
   <link rel="icon" type="image/png" href="/icon.png">
 
   <style>
+    * {
+      -webkit-tap-highlight-color: transparent;
+      box-sizing: border-box;
+      transform: translateZ(0);
+    }
     body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background-color: #f5f5f7;
       margin: 0;
       padding: 0;
-      background-color: #f5f5f7;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      color: #111;
+      font-size: 56px;
+      -webkit-overflow-scrolling: touch;
+    }
+    .card {
+      background: white;
+      border-radius: 0;
+      padding: 40px 20px;
+      width: 100%;
+      max-width: 100%;
+      margin: 0;
+      box-shadow: none;
+      min-height: 100vh;
+    }
+    h2 {
+      margin-top: 10px;
+      color: #1d1d1f;
+      text-align: center;
+      font-size: 4.8rem;
+      margin-bottom: 35px;
+    }
+    .tab-group {
+      display: flex;
+      border-bottom: 6px solid #e5e5ea;
+      margin-bottom: 40px;
+    }
+    .tab-btn {
+      flex: 1;
+      padding: 30px;
+      background: none;
+      border: none;
+      font-size: 3.2rem;
+      font-weight: bold;
+      color: #8e8e93;
+      cursor: pointer;
+      border-bottom: 6px solid transparent;
+      transition: background 0.1s;
+    }
+    .tab-btn:active {
+      background-color: #e5e5ea;
+      transform: scale(0.98);
+    }
+    .tab-btn.active {
+      color: #007aff;
+      border-bottom-color: #007aff;
+    }
+    .sub-title {
+      text-align: center;
+      color: #111;
+      font-size: 3.4rem;
+      margin-bottom: 35px;
+      font-weight: bold;
+    }
+    .step-box {
+      text-align: center;
+      padding: 40px 0;
+    }
+    label {
+      font-weight: bold;
+      display: block;
+      margin-bottom: 25px;
+      font-size: 3.4rem;
+    }
+    input[type="tel"] {
+      width: 100%;
+      max-width: 500px;
+      padding: 30px;
+      font-size: 6rem;
+      border: 4px solid #007aff;
+      border-radius: 20px;
+      text-align: center;
+      letter-spacing: 16px;
+      margin: 0 auto 40px auto;
+      display: block;
+      background: #fafafa;
+    }
+    .batch-control-box {
+      background-color: #f2f2f7;
+      padding: 30px 20px;
+      border-radius: 20px;
+      margin-bottom: 35px;
+      border: 2px solid #c7c7cc;
+    }
+    .batch-label {
+      font-size: 3rem;
+      font-weight: bold;
+      color: #111;
+      margin-bottom: 20px;
+    }
+    .batch-row {
+      display: flex;
+      gap: 15px;
+      margin-bottom: 20px;
+    }
+    .batch-select {
+      flex: 1;
+      padding: 25px 70px 25px 25px;
+      font-size: 3.4rem;
+      border-radius: 16px;
+      border: 3px solid #007aff;
+      background-color: #fff;
+      background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24"><text x="2" y="18" font-size="20" font-weight="bold" fill="%23007aff">▼</text></svg>');
+      background-repeat: no-repeat;
+      background-position: right 20px center;
+      background-size: 50px 50px;
+      -webkit-appearance: none;
+      -moz-appearance: none;
+      appearance: none;
+      font-weight: bold;
+    }
+    .batch-btn-group {
       display: flex;
       flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-      color: #333;
+      gap: 20px;
     }
-    .btn {
+    .batch-btn {
+      background-color: #007aff;
+      color: #fff;
+      border: none;
+      padding: 25px;
+      font-size: 3rem;
+      border-radius: 16px;
+      cursor: pointer;
+      font-weight: bold;
+      box-shadow: 0 4px 0 #0056b3;
+      transition: transform 0.05s, box-shadow 0.05s;
+    }
+    .batch-btn:active {
+      transform: translateY(4px);
+      box-shadow: 0 0 0 #0056b3;
+    }
+    .batch-btn.secondary { 
+      background-color: #248a3d; 
+      box-shadow: 0 4px 0 #1b682e;
+    }
+    .batch-btn.secondary:active {
+      transform: translateY(4px);
+      box-shadow: 0 0 0 #1b682e;
+    }
+    .batch-btn.clear { 
+      background-color: #636366; 
+      box-shadow: 0 4px 0 #444446;
+    }
+    .batch-btn.clear:active {
+      transform: translateY(4px);
+      box-shadow: 0 0 0 #444446;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+    th, td {
+      border: 3px solid #b0b0b5;
+      padding: 25px 15px; 
+      text-align: center;
+      font-size: 3.2rem;
+      font-weight: bold;
+    }
+    th { background-color: #e5e5ea; font-size: 3.4rem; }
+    tr.sat { background-color: #cce4ff; }
+    tr.sun { background-color: #ffcccc; }
+    
+    select {
+      width: 100%;
+      padding: 20px 70px 20px 15px;
+      font-size: 3.2rem;
+      border-radius: 16px;
+      border: 3px solid #007aff;
+      background-color: #fff;
+      background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24"><text x="2" y="18" font-size="20" font-weight="bold" fill="%23007aff">▼</text></svg>');
+      background-repeat: no-repeat;
+      background-position: right 20px center;
+      background-size: 50px 50px;
+      -webkit-appearance: none;
+      -moz-appearance: none;
+      appearance: none;
+      font-weight: bold;
+      margin-bottom: 10px;
+    }
+    
+    input[type="text"] {
+      width: 100%;
+      padding: 20px 15px;
+      border-radius: 16px;
+      border: 3px solid #8e8e93;
+      background: #fff;
+      font-size: 2.8rem;
+      font-weight: normal;
+      margin-bottom: 0;
+    }
+    input[type="text"]::placeholder {
+      color: #aeaeb2;
+    }
+    
+    .main-submit-btn {
+      width: 100%;
       background-color: #007aff;
       color: white;
       border: none;
-      padding: 20px 40px;
-      font-size: 1.5rem;
+      padding: 30px;
+      font-size: 3.6rem;
       font-weight: bold;
-      border-radius: 16px;
+      border-radius: 20px;
+      margin-top: 40px;
+      margin-bottom: 20px;
       cursor: pointer;
-      box-shadow: 0 4px 0 #0056b3;
-      margin-top: 20px;
-      text-decoration: none;
+      box-shadow: 0 6px 0 #0056b3, 0 10px 20px rgba(0,122,255,0.4);
+      transition: transform 0.05s, box-shadow 0.05s;
     }
-    .btn:active {
-      transform: translateY(4px);
-      box-shadow: 0 0 0 #0056b3;
+    .main-submit-btn:active {
+      transform: translateY(6px);
+      box-shadow: 0 0 0 #0056b3, 0 4px 10px rgba(0,122,255,0.4);
+    }
+    .main-submit-btn:disabled { 
+      background-color: #aeaeb2; 
+      box-shadow: none; 
+      transform: none;
+    }
+    
+    .cancel-btn {
+      width: 100%;
+      background-color: #8e8e93;
+      color: white;
+      border: none;
+      padding: 25px;
+      font-size: 3.2rem;
+      font-weight: bold;
+      border-radius: 20px;
+      margin-bottom: 60px;
+      cursor: pointer;
+      box-shadow: 0 6px 0 #636366;
+      transition: transform 0.05s, box-shadow 0.05s;
+    }
+    .cancel-btn:active {
+      transform: translateY(6px);
+      box-shadow: 0 0 0 #636366;
+    }
+
+    #loading { text-align: center; padding: 60px; color: #333; font-size: 3.6rem; font-weight: bold; }
+    
+    #finishScreen {
+      text-align: center;
+      padding: 100px 20px;
+    }
+    #finishScreen h2 {
+      font-size: 5rem;
+      color: #248a3d;
+      margin-bottom: 40px;
+    }
+    #finishScreen p {
+      font-size: 3.2rem;
+      line-height: 1.6;
+      color: #333;
     }
   </style>
 </head>
 <body>
-  <div style="text-align: center; padding: 20px;">
-    <h2>通所予定入力フォームへようこそ</h2>
-    <p>下のボタンを押すとアプリが起動します</p>
-    <a href="https://script.google.com/macros/s/AKfycbw7kLPMXfliazpKDnGy4PZThB7baEYH60Jvr5yhYJmkgItHvk5P8XlWzE048k6hMVoC/exec" class="btn">アプリを起動する</a>
+
+<div class="card">
+  <div id="appHeader">
+    <h2>通所予定入力フォーム</h2>
   </div>
+
+  <!-- 認証エリア -->
+  <div id="authSection">
+    <div class="tab-group">
+      <button type="button" class="tab-btn active" id="tabLogin" onclick="switchTab('login')">ログイン</button>
+      <button type="button" class="tab-btn" id="tabRegister" onclick="switchTab('register')">新規登録</button>
+    </div>
+
+    <!-- ログインパネル -->
+    <div id="loginPanel" class="step-box">
+      <label for="pinLogin">暗証番号（半角数字4桁）</label>
+      <input type="tel" id="pinLogin" maxlength="4" pattern="^[0-9]{4}$" placeholder="••••" autofocus>
+      <button type="button" class="main-submit-btn" id="loginBtn" onclick="handleLogin()">次へ進む</button>
+    </div>
+
+    <!-- 新規登録パネル -->
+    <div id="registerPanel" class="step-box" style="display:none;">
+      <label for="pinRegister">登録する暗証番号（半角数字4桁）</label>
+      <input type="tel" id="pinRegister" maxlength="4" pattern="^[0-9]{4}$" placeholder="••••">
+      <button type="button" class="main-submit-btn" id="registerBtn" onclick="handleRegister()">暗証番号を登録する</button>
+    </div>
+  </div>
+
+  <!-- カレンダー予定入力画面 -->
+  <div id="calendarSection" style="display:none;">
+    <div id="loading">来月のカレンダーを読み込み中...</div>
+
+    <form id="scheduleForm" style="display:none;" onsubmit="handleFormSubmit(event)">
+      <div class="sub-title" id="monthTitle"></div>
+
+      <div class="batch-control-box">
+        <div class="batch-label">💡 まとめ入力機能</div>
+        <div class="batch-row">
+          <select id="batchValue" class="batch-select">
+            <option value="〇" selected>〇</option>
+            <option value="✕">✕</option>
+            <option value="AM">AM</option>
+            <option value="PM">PM</option>
+            <option value="在宅">在宅</option>
+            <option value="?">?</option>
+          </select>
+        </div>
+        <div class="batch-btn-group">
+          <button type="button" class="batch-btn" onclick="applyBatch('weekday')">📌 平日のみまとめ入力</button>
+          <button type="button" class="batch-btn secondary" onclick="applyBatch('all')">📌 土曜込み(月〜土)にまとめ入力</button>
+          <button type="button" class="batch-btn clear" onclick="applyBatch('clear')">🧹 すべて未選択に戻す</button>
+        </div>
+      </div>
+
+      <table>
+        <thead>
+          <tr>
+            <th style="width: 35%;">日付</th>
+            <th>予定 / 備考</th>
+          </tr>
+        </thead>
+        <tbody id="calendarBody"></tbody>
+      </table>
+
+      <button type="submit" id="submitBtn" class="main-submit-btn">予定を送信する</button>
+      <button type="button" class="cancel-btn" onclick="handleCancel()">キャンセル</button>
+    </form>
+  </div>
+
+  <!-- 送信完了・アプリ終了画面 -->
+  <div id="finishScreen" style="display:none;">
+    <h2>✅ 送信が完了しました</h2>
+    <p>ご協力ありがとうございました！<br>予定データが正常に登録されました。</p>
+    <p style="margin-top: 60px; font-size: 2.8rem; color: #8e8e93; font-weight: bold;">【アプリ終了】<br>この画面（タブ）を閉じてください。</p>
+  </div>
+</div>
+
+<script>
+  // ★ ここにご自身のGASウェブアプリのURLを設定してください
+  const GAS_API_URL = "https://script.google.com/macros/s/AKfycbw7kLPMXfliazpKDnGy4PZThB7baEYH60Jvr5yhYJmkgItHvk5P8XlWzE048k6hMVoC/exec";
+
+  let enteredPin = "";
+  let targetYM = "";
+  let isEditMode = false;
+
+  async function callGasApi(payload) {
+    const response = await fetch(GAS_API_URL, {
+      method: "POST",
+      body: JSON.stringify(payload)
+    });
+    return await response.json();
+  }
+
+  function switchTab(type) {
+    const tabLogin = document.getElementById('tabLogin');
+    const tabRegister = document.getElementById('tabRegister');
+    const loginPanel = document.getElementById('loginPanel');
+    const registerPanel = document.getElementById('registerPanel');
+
+    if (type === 'login') {
+      tabLogin.classList.add('active');
+      tabRegister.classList.remove('active');
+      loginPanel.style.display = 'block';
+      registerPanel.style.display = 'none';
+      document.getElementById('pinLogin').focus();
+    } else {
+      tabRegister.classList.add('active');
+      tabLogin.classList.remove('active');
+      loginPanel.style.display = 'none';
+      registerPanel.style.display = 'block';
+      document.getElementById('pinRegister').focus();
+    }
+  }
+
+  async function handleRegister() {
+    const pinInput = document.getElementById('pinRegister');
+    const pin = pinInput.value;
+
+    if (!/^[0-9]{4}$/.test(pin)) {
+      alert('暗証番号は半角数字4桁で入力してください。');
+      pinInput.focus();
+      return;
+    }
+
+    const btn = document.getElementById('registerBtn');
+    btn.disabled = true;
+    btn.innerText = '登録中...';
+
+    try {
+      const res = await callGasApi({ action: "registerPin", pin: pin });
+      btn.disabled = false;
+      btn.innerText = '暗証番号を登録する';
+
+      if (res.success) {
+        alert('暗証番号の登録が完了しました。\n\n管理者に「氏名」と「暗証番号」をお伝えください。');
+        pinInput.value = '';
+        switchTab('login');
+      } else {
+        alert(res.message);
+        pinInput.value = '';
+        pinInput.focus();
+      }
+    } catch (err) {
+      btn.disabled = false;
+      btn.innerText = '暗証番号を登録する';
+      alert('エラーが発生しました: ' + err.message);
+    }
+  }
+
+  async function handleLogin() {
+    const pinInput = document.getElementById('pinLogin');
+    const pin = pinInput.value;
+
+    if (!/^[0-9]{4}$/.test(pin)) {
+      alert('暗証番号は半角数字4桁で入力してください。');
+      pinInput.focus();
+      return;
+    }
+
+    const btn = document.getElementById('loginBtn');
+    btn.disabled = true;
+    btn.innerText = '照会中...';
+
+    try {
+      const calendarInfo = await callGasApi({ action: "getNextMonthData" });
+      targetYM = calendarInfo.year + "年" + calendarInfo.month + "月";
+
+      const res = await callGasApi({ action: "verifyAndGetCalendar", pin: pin, targetYM: targetYM });
+      btn.disabled = false;
+      btn.innerText = '次へ進む';
+
+      if (!res.success) {
+        alert(res.message);
+        pinInput.value = '';
+        pinInput.focus();
+        return;
+      }
+
+      if (res.hasExisting) {
+        if (!confirm('入力済みの情報がありますが書き換えますか？')) {
+          pinInput.value = '';
+          pinInput.focus();
+          return;
+        }
+        isEditMode = true;
+      } else {
+        isEditMode = false;
+      }
+
+      enteredPin = pin;
+      document.getElementById('authSection').style.display = 'none';
+      document.getElementById('calendarSection').style.display = 'block';
+
+      renderCalendar(calendarInfo, res.existingData);
+    } catch (err) {
+      btn.disabled = false;
+      btn.innerText = '次へ進む';
+      alert('エラーが発生しました: ' + err.message);
+    }
+  }
+
+  function renderCalendar(data, existingData) {
+    document.getElementById('monthTitle').innerText = targetYM + " の予定を選択してください";
+    
+    const tbody = document.getElementById('calendarBody');
+    tbody.innerHTML = "";
+
+    data.days.forEach(d => {
+      const tr = document.createElement('tr');
+      if (d.isSaturday) tr.className = 'sat';
+      if (d.isSunday) tr.className = 'sun';
+
+      const tdDate = document.createElement('td');
+      tdDate.innerText = d.day + "日(" + d.dayName + ")";
+
+      const savedVal = (existingData && existingData.schedules[d.day]) ? existingData.schedules[d.day] : "";
+      const savedRemark = (existingData && existingData.remarks[d.day]) ? existingData.remarks[d.day] : "";
+
+      const tdControl = document.createElement('td');
+      tdControl.innerHTML = `
+        <select name="day_${d.day}" data-sat="${d.isSaturday}" data-sun="${d.isSunday}">
+          <option value="" ${savedVal === "" ? "selected" : ""} disabled>-- 未選択 --</option>
+          <option value="〇" ${savedVal === "〇" ? "selected" : ""}>〇</option>
+          <option value="✕" ${savedVal === "✕" ? "selected" : ""}>✕</option>
+          <option value="AM" ${savedVal === "AM" ? "selected" : ""}>AM</option>
+          <option value="PM" ${savedVal === "PM" ? "selected" : ""}>PM</option>
+          <option value="在宅" ${savedVal === "在宅" ? "selected" : ""}>在宅</option>
+          <option value="?" ${savedVal === "?" ? "selected" : ""}>?</option>
+        </select>
+        <input type="text" name="remark_${d.day}" value="${savedRemark}" placeholder="備考（任意）">
+      `;
+
+      tr.appendChild(tdDate);
+      tr.appendChild(tdControl);
+      tbody.appendChild(tr);
+    });
+
+    document.getElementById('loading').style.display = 'none';
+    document.getElementById('scheduleForm').style.display = 'block';
+  }
+
+  function applyBatch(mode) {
+    const selectedVal = document.getElementById('batchValue').value;
+    const selects = document.querySelectorAll('#calendarBody select');
+
+    selects.forEach(sel => {
+      const isSat = sel.getAttribute('data-sat') === 'true';
+      const isSun = sel.getAttribute('data-sun') === 'true';
+
+      if (isSun) return;
+
+      if (mode === 'clear') {
+        sel.value = "";
+      } else if (mode === 'all') {
+        sel.value = selectedVal;
+      } else if (mode === 'weekday') {
+        if (!isSat) sel.value = selectedVal;
+      }
+    });
+  }
+
+  function handleCancel() {
+    if (confirm('入力途中の内容は破棄されます。ログイン画面に戻りますか？')) {
+      enteredPin = "";
+      isEditMode = false;
+      document.getElementById('pinLogin').value = "";
+      document.getElementById('calendarSection').style.display = 'none';
+      document.getElementById('scheduleForm').style.display = 'none';
+      document.getElementById('loading').style.display = 'block';
+      document.getElementById('authSection').style.display = 'block';
+      switchTab('login');
+    }
+  }
+
+  async function handleFormSubmit(e) {
+    e.preventDefault();
+
+    const selects = document.querySelectorAll('#calendarBody select');
+    let hasEmptyWeekday = false;
+
+    selects.forEach(sel => {
+      const isSat = sel.getAttribute('data-sat') === 'true';
+      const isSun = sel.getAttribute('data-sun') === 'true';
+      if (!isSat && !isSun && !sel.value) {
+        hasEmptyWeekday = true;
+      }
+    });
+
+    if (hasEmptyWeekday) {
+      if (!confirm('平日（月〜金）の中に未選択の日付がありますが、このまま送信しますか？')) {
+        return;
+      }
+    }
+
+    if (isEditMode) {
+      if (!confirm(targetYM + 'の通所予定を書き換えます。よろしいですか？')) {
+        return;
+      }
+    }
+
+    const btn = document.getElementById('submitBtn');
+    btn.disabled = true;
+    btn.innerText = '送信中...';
+
+    const schedules = {};
+    const remarks = {};
+
+    selects.forEach(sel => {
+      const dayNum = sel.name.replace('day_', '');
+      schedules[dayNum] = sel.value || "";
+    });
+
+    const inputs = document.querySelectorAll('#calendarBody input[type="text"]');
+    inputs.forEach(inp => {
+      const dayNum = inp.name.replace('remark_', '');
+      remarks[dayNum] = inp.value || "";
+    });
+
+    try {
+      await callGasApi({
+        action: "submitSchedule",
+        pin: enteredPin,
+        targetYearMonth: targetYM,
+        schedules: schedules,
+        remarks: remarks
+      });
+
+      alert('予定の送信が完了しました。ご協力ありがとうございました！');
+      document.getElementById('appHeader').style.display = 'none';
+      document.getElementById('authSection').style.display = 'none';
+      document.getElementById('calendarSection').style.display = 'none';
+      document.getElementById('finishScreen').style.display = 'block';
+    } catch (err) {
+      btn.disabled = false;
+      btn.innerText = '予定を送信する';
+      alert('送信エラーが発生しました: ' + err.message);
+    }
+  }
+</script>
+
 </body>
 </html>
